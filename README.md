@@ -18,5 +18,5 @@ pip3 install pipreqsnb
 
 Luego
 ```
-pipreqsnb --savepath ./requirements.txt main.ipynb
+./generate_requirements.sh *.ipynb
 ```
