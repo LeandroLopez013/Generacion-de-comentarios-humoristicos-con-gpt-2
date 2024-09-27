@@ -44,5 +44,8 @@ done
 # Elimina archivos temporales que se generaron
 rm -f ./*_requirements.txt
 
-echo "Requisitos combinados en $FINAL_OUTPUT."
+# Eliminar líneas duplicadas del archivo final
+echo "Eliminando líneas duplicadas en $FINAL_OUTPUT..."
+sort -u $FINAL_OUTPUT -o $FINAL_OUTPUT
 
+echo "Requisitos combinados sin duplicados en $FINAL_OUTPUT."
