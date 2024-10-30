@@ -20,3 +20,13 @@ Luego
 ```
 ./generate_requirements.sh *.ipynb
 ```
+
+## Correr Bot de Telegram
+
+[link al bot de telegram](https://t.me/gen_tm_bot)
+```
+cd bot/
+python3 -m venv env
+source env/bin/activate
+python3 bot.py
+```
