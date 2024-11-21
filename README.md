@@ -5,33 +5,33 @@ Autores: [Kevin Mansilla](https://github.com/kevmansilla),
 
 ## Introducción
 En este proyecto exploraremos las capacidades de GPT-2 para generar comentarios 
-humoristicos en español. Para ello utilizaremos la tecnica de *fine-tuning*, que 
+humorísticos en español. Para ello utilizaremos la técnica de *fine-tuning*, que 
 consiste en entrenar el modelo con un dataset específico para que pueda generar 
 texto con un estilo particular. 
 
-Los resultados obtenidos durante el entrenamoento no fueron los esperados, 
-por lo que concluimos que GPT-2 no esta preparado para entender un concepto tan 
+Los resultados obtenidos durante el entrenamiento no fueron los esperados, 
+por lo que concluimos que GPT-2 no está preparado para entender un concepto tan 
 abstracto o subjetivo como lo es el humor.
 
-En las siguientes secciones se presentaran detalles del modelo utilizado, la 
+En las siguientes secciones se presentarán detalles del modelo utilizado, la 
 base de datos que construimos, la metodología y parámetros que utilizamos para
-entrenar el modelo. Luego una evaluación de los resultados y finalmente
-conclusiones y trabajo futuro. Y por último un anexo donde se describen las complicaciones que se nos presentaron durante el desarrollo del proyecto.
+entrenar el modelo. Luego una evaluación de los resultados, algunas conclusiones 
+particulares y trabajo futuro. Por último, un anexo donde se describen las complicaciones que se nos presentaron durante el desarrollo del proyecto.
 
 ## Modelo
 
 El modelo utilizado es [GPT2-medium](https://huggingface.co/DeepESP/gpt2-spanish-medium) 
-que es un modelo de generacion de lenguaje entreneado desde cero con 11,5GB de 
-textos en español de los cuales 3.5GB corresponden a articulos de Wikipedia y 
-8GB a libros de narrativa, cuentos, poesias, ensayos y divulgación. Los datos 
+que es un modelo de generación de lenguaje entrenado desde cero con 11,5GB de 
+textos en español, de los cuales 3.5GB corresponden a artículos de Wikipedia y 
+8GB a libros de narrativa, cuentos, poesías, ensayos y divulgación. Los datos 
 usan tokenizador Byte Pair Encoding (BPE), los parámetros utilizados son los 
-mismos que los de la version mediana del modelo OpenAI GPT-2 original.
+mismos que los de la versión mediana del modelo OpenAI GPT-2 original.
 
 En la siguiente imagen se presenta la arquitectura del modelo, que consiste en 
-cargar la base de datos de *hugginface*, luego el modelo base que describirmos 
+cargar la base de datos de *hugginface*, luego el modelo base que describimos 
 anteriormente, para posteriormente realizar el fine-tunning. Una vez realizado 
 esto el usuario puede ingresar una pregunta como por ejemplo "¿De qué murió Bob
-Marley?" y el modelo fine tuneado le devolvera por medio de un bot de telegram 
+Marley?", y el modelo fine tuneado le devolverá por medio de un bot de telegram 
 una respuesta graciosa como puede ser "De un porrazo", la cual podrá ser 
 evaluada con un like o dislike.
 
@@ -39,7 +39,7 @@ evaluada con un like o dislike.
     <img src='./pictures/arq.jpg' alt="Descripción de la imagen">
 </figure>
 
-En las siguentes secciones se darán detalles mas profundos de cada parte de la
+En las siguientes secciones se darán detalles mas profundos de cada parte de la
 arquitectura.
 
 ## Base de datos
@@ -60,45 +60,58 @@ correcta ([1](https://huggingface.co/datasets/ysharma/short_jokes),
 [3](https://huggingface.co/datasets/Danielbrdz/Barcenas-HumorNegro),
 [4](https://huggingface.co/datasets/mrm8488/CHISTES_spanish_jokes)). 
 
-Al combinar estos *datasets* obtuvimos de unos 700 chistes, lo que nos parecio 
-poco, por lo que decidimos hacer un *web scraping* de algunas paginas aleatorias 
+Al combinar estos *datasets* obtuvimos de unos 700 chistes, lo que nos pareció 
+poco, por lo que decidimos hacer un *web scraping* de algunas páginas aleatorias, 
 con lo que logramos un total de 1.732 chistes. 
 
 A su vez, a cada elemento de la [base de datos](https://huggingface.co/datasets/kevmansilla/jokes_spanish_tm) 
 decidimos agregarles unos *tags* que ayuden al modelo a entender la estructura 
-del chiste y poder generar respuestas más acertadas. Como por ejemplo:
+del chiste y poder generar respuestas más acertadas. Como, por ejemplo:
 ```
 <START>[QUESTION] ¿De qué murió Bob Marley? [ANSWER] De un porrazo. <END>
 ```
 Donde `<START>` y `<END>` son los *tokens* de inicio y fin de texto, `[QUESTION]` 
 y `[ANSWER]` son los *tags* que indican el tipo de texto que sigue. Estos 
-seran de gran ayuda al momento de entrenar el modelo y generar respuestar acordes.
+serán de gran ayuda al momento de entrenar el modelo y generar respuestas acordes.
+
+Por otra parte, tambien realizamos un *topic modelling* el cual se puede 
+consultar en el archivo `lda_new_dataset.ipynb` para ver como se distribuyen
+los chistes en distintos tópicos. Los resultados se pueden ver en la siguiente
+imagen, se observa a simple vista que analizando 8 tópicos con 6 palabras 
+claves en cada uno, no se logra encontrar una relación clara entre los chistes
+de cada tópico, solo en algunos como el tipo 8 donde habla de hijo, hija, mamá, 
+papa, y el topico 7 pero en menor medida.
+
+<figure>
+    <img src='./pictures/nube_palabras.png' alt="Descripción de la imagen">
+</figure>
+
 
 ### Metodología y entrenamiento
 
-Para poder entrenar el modelo utilizaremos librerias de python como `keras`,
+Para poder entrenar el modelo utilizaremos librerías de python como `keras`,
 `torch` y `transformers`, debido a que son las más utilizadas por la comunidad 
 y presentan una gran cantidad de recursos y documentación. Y empleando
 [este](https://huggingface.co/crscardellino/flisol-cba-martin-fierro/blob/main/flisol-cordoba-2023.ipynb) 
 repo como guía para el *finetuning*
 
-Antes de iniciar el entrenamiento separamos la base de datos en un set de 
+Antes de iniciar el entrenamiento, separamos la base de datos en un set de 
 entrenamiento y otro de validación, con un 70% y 30% respectivamente. Luego, 
 tokenizamos los textos y los convertimos en tensores para poder alimentar al modelo.
 
-Para entrenar de manera más eficiente usamos lo que se como nose como 
+Para entrenar de manera más eficiente usamos lo que se conoce como 
 **batch gradiend decent**. Donde la idea es tomar los textos de a bloques 
-de un valor maximo para calcular el gradiente. Esta técnica ofrece un balance
+de un valor má  ximo para calcular el gradiente. Esta técnica ofrece un balance
 entre el cálculo exacto de gradientes (descenso de gradiente en 
 batch completo) y la eficiencia de procesamiento (descenso de 
 gradiente estocástico).
 
 Nosotros usamos un tamaño de *batch* de 8, es decir, que tomamos 8 chistes a la
 vez para calcular el gradiente y actualizar los pesos del modelo. Esto nos 
-parecio adecuado ya que no contamos con una gran cantidad de datos y 
-queriamos utilizador los recursos computacionales de manera eficiente.
+pareció adecuado, ya que no contamos con una gran cantidad de datos y 
+queríamos utilizar los recursos computacionales de manera eficiente.
 
-Los parametros utilizados para el entrenamiento fueron los siguientes:
+Los parámetros utilizados para el entrenamiento fueron los siguientes:
 ``` overwrite_output_dir=True,
     num_train_epochs=12,
     learning_rate=1e-6,
@@ -115,26 +128,26 @@ Los parametros utilizados para el entrenamiento fueron los siguientes:
     metric_for_best_model="eval_loss",
     greater_is_better=False  # Indica que buscamos minimizar eval_loss
 ```
-Y luego utilizamos la función `Trainer` de la libreria `transformers` para entrenar
+Y luego utilizamos la función `Trainer` de la librería `transformers` para entrenar
 el modelo. Agregamos early stopping de 3 épocas para evitar el sobreajuste, es 
 decir, que cuando la métrica de evaluación no mejora en 3 épocas seguidas, se
 detiene el entrenamiento y se guarda el mejor modelo.
 
-Para ver el detalle de como fue entrenado el modelo ver el archivo 
-`fine_tuning_question_answer.ipynb`. Usamos computo del [CCAD](https://ccad.unc.edu.ar/) 
+Para ver el detalle de cómo fue entrenado el modelo, ver el archivo 
+`fine_tuning_question_answer.ipynb`. Usamos cómputo del [CCAD](https://ccad.unc.edu.ar/) 
 de la UNC, con la computadora [Jupyter](https://wiki.ccad.unc.edu.ar/infra/computadoras.html)
 
 ## Evaluación
 
-El principal problema que presenta este trabajo es la evalación del modelo, 
-debido a que el humor es un tema muy dibjetivo por lo que una métrica de las 
-tradicionales no son muy informativas. Es por ello que se decidio implementar 
+El principal problema que presenta este trabajo es la evalución del modelo, 
+debido a que el humor es un tema muy subjetivo por lo que una métrica de las 
+tradicionales no es muy informativas. Es por ello que se decidió implementar 
 un bot de telegram que permita a los usuarios evaluar las respuestas generadas
 por el modelo.
 
-El bot, utilizando el modelo entrenado respondera con el texto generado y 
-luego los usuarios podrán calificar con like y dislike si el chiste les gusto 
-o no. como por ejemplo en la siguiente imagen:
+El bot, utilizando el modelo entrenado, responderá con el texto generado y 
+luego los usuarios podrán calificar con like y dislike si el chiste les gustó 
+o no. Como por ejemplo en la siguiente imagen:
 
 <figure>
     <img src='./pictures/bot.png' alt="Descripción de la imagen">
@@ -142,20 +155,20 @@ o no. como por ejemplo en la siguiente imagen:
 
 Esto nos fue de gran utilidad para poder evaluar el modelo. Por lo que podemos 
 decir que el bot fue capaz de responder un 88.14% de las preguntas que se 
-le realizaron y de estas el 25.0% fueron calificadas como graciosas.
+le realizaron y de estas el 25.0% fue calificado como gracioso.
 
 ## Conclusiones
 
 En este trabajo exploramos las capacidades de GPT-2 para generar comentarios
-humoristicos en español. Para ello, entrenamos el modelo con una base de datos
+humorísticos en español. Para ello, entrenamos el modelo con una base de datos
 de chistes del tipo pregunta y respuesta. Sin embargo, los resultados obtenidos
 no fueron los esperados, ya que el modelo no fue capaz de generar chistes
-graciosos de manera consistente y en muchos casos producia texto ofencivo.
+graciosos de manera consistente y en muchos casos producía texto ofensivo.
 
-Esto nos lleva a concluir que GPT-2 no esta preparado para entender un concepto
-tan abstracto o subjetivo como lo es el humor. Por lo que se necesitaria un
-modelo mas complejo o una base de datos mas grande y estructurada para poder
-lograr resultados satisfactorios. O bien, se podria explorar otras tecnicas
+Esto nos lleva a concluir que GPT-2 no está preparado para entender un concepto
+tan abstracto o subjetivo como lo es el humor. Por lo que se necesitaría un
+modelo más complejo o una base de datos más grande y estructurada para poder
+lograr resultados satisfactorios. O bien, se podría explorar otras técnicas
 de entrenamiento que mejoren el desempeño.
 
 ## Trabajo futuro
@@ -185,34 +198,35 @@ a los del tipo pregunta y respuesta.
 
 ## Anexo: Complicaciones encontradas durante el desarrollo del proyecto
 
-Nuestra idea inicial, era generar comentarios humoristicos a partir de una 
-lista de tópicos como por ejemplo "futbol", "política", "religión", etc. Y que 
+Nuestra idea inicial, era generar comentarios humorísticos a partir de una 
+lista de tópicos como por ejemplo "fútbol", "política", "religión", etc. Y que 
 el modelo pudiera generar comentarios graciosos a partir de estos temas. Para 
-esto entrenamos el modelo con una una 
+esto entrenamos el modelo con una 
 [base de datos](https://huggingface.co/datasets/mrm8488/CHISTES_spanish_jokes)
 en español de huggingface de 2419 chistes. 
 
 Como punto de partida, realizamos un análisis exploratorio de la base para 
-identificar atributos como el largo de los chistes y determinar cuál categoria 
+identificar atributos como el largo de los chistes y determinar cuál categoría 
 predominaba, ya que los datos venían pre-clasificados. Sin embargo, no resultó 
-de mucha utilidad ya que gran cantidad de l contenido estaban incluidas en una 
-categoria denominada 'otros' que no aportaba mucha información.
+de mucha utilidad, ya que gran cantidad de l contenido estaban incluidas en una 
+categoría denominada 'otros' que no aportaba mucha información.
 
 Por esta razón, complementamos el análisis con distintas técnicas no supervisadas 
-de *topic modelling* como lo es *clustering* y LDA. Luego de analizar los 
-resultados, decidimos quedarnos con el LDA ya que en los resultados obtenidos por 
-*clustering* las palabras de cada grupo no tenían mucha relación entre sí, en 
-cambio en LDA si se podría ver un hilo conductor. 
+de *topic modelling* como lo es *clustering* y LDA (esto se puede consultar en 
+el archivo `lda.ipynb`). Luego de analizar los 
+resultados, decidimos quedarnos con el LDA, ya que en los resultados obtenidos por 
+*clustering* las palabras de cada grupo no tenían mucha relación entre sí; en 
+cambio, en LDA si se podría ver un hilo conductor. 
 
 Luego de esto, entrenamos el modelo, lo cual también trajo varios inconvenientes. 
-El primero fue que nos dimos cuenta que al entrenarlo durante muchas iteraciones 
-se produce un *overfitting* (esto se puede ver en mas detalle en el archivo 
-`analisis_entrenamientos.ipynb`). Entonces para solucionar esto usamos 
+El primero fue que nos dimos cuenta de que al entrenarlo durante muchas iteraciones 
+se produce un *overfitting* (esto se puede ver en más detalle en el archivo 
+`analisis_entrenamientos.ipynb`). Entonces, para solucionar esto usamos 
 *early stopping* de modo que el entrenamiento se detuviera automáticamente si 
 el validation loss no mejoraba durante varias épocas consecutivas, permitiendo 
 encontrar un punto óptimo. Luego de esto, usamos el modelo entrenado para generar 
 los chistes y nos encontramos con el problema de que producía texto sin sentido 
-y muy extenso lo que dificulta encontrar un hilo conductor en el chiste, como lo 
+y muy extenso, lo que dificulta encontrar un hilo conductor en el chiste, como lo 
 siguiente:
 
 ```
@@ -245,11 +259,10 @@ amenazante. El hombre se queda pensativo unos instantes antes de responder:
 ```
 La segunda opción arrojó los mismos resultados que el enfoque anterior, lo que 
 nos llevó a la conclusión de que el problema no radicaba ni en la cantidad de 
-chistes disponibles ni en cómo estos eran procesados. Sino que era un inconveniente 
-de la estructura de los mismos, ya que ambas bases tenían chistes con estructuras 
-muy diversas, lo que dificulta el modelo de capturar patrones. 
+chistes disponibles ni en cómo estos eran procesados. Si no que era un inconveniente de la estructura de los mismos, ya que ambas bases tenían chistes 
+con estructuras muy diversas, lo que dificulta el modelo de capturar patrones. 
 
 Por estas razones, decidimos cambiar el enfoque del trabajo de generación de 
-comentarios humotisticos por medio de tópicos a generarlos por medio de una 
+comentarios humorísticos por medio de tópicos a generarlos por medio de una 
 pregunta y esto condujo a los resultados presentados en las secciones
 anteriores.
