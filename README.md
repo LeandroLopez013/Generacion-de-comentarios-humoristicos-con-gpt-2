@@ -13,11 +13,12 @@ Los resultados obtenidos durante el entrenamiento no fueron los esperados,
 por lo que concluimos que GPT-2 no está preparado para entender un concepto tan 
 abstracto o subjetivo como lo es el humor.
 
-En las siguientes secciones se presentarán detalles del modelo utilizado, la 
-base de datos que construimos, la metodología y parámetros que utilizamos para
-entrenar el modelo. Luego una evaluación de los resultados, algunas conclusiones 
-particulares y trabajo futuro. Por último, un anexo donde se describen las complicaciones que se nos presentaron durante el desarrollo del proyecto.
-
+En las siguientes secciones se detallarán el modelo utilizado, la base de 
+datos desarrollada, la metodología empleada y los parámetros seleccionados para el 
+entrenamiento. Posteriormente, se analizarán los resultados obtenidos, 
+se presentarán conclusiones específicas y se plantearán posibles líneas de 
+trabajo futuro. Finalmente, se incluirá un anexo que describe las 
+dificultades enfrentadas durante el desarrollo del proyecto.
 ## Modelo
 
 El modelo utilizado es [GPT2-medium](https://huggingface.co/DeepESP/gpt2-spanish-medium) 
@@ -39,7 +40,7 @@ evaluada con un like o dislike.
     <img src='./pictures/arq.jpg' alt="Descripción de la imagen">
 </figure>
 
-En las siguientes secciones se darán detalles mas profundos de cada parte de la
+En las siguientes secciones se darán detalles más profundos de cada parte de la
 arquitectura.
 
 ## Base de datos
@@ -74,13 +75,13 @@ Donde `<START>` y `<END>` son los *tokens* de inicio y fin de texto, `[QUESTION]
 y `[ANSWER]` son los *tags* que indican el tipo de texto que sigue. Estos 
 serán de gran ayuda al momento de entrenar el modelo y generar respuestas acordes.
 
-Por otra parte, tambien realizamos un *topic modelling* el cual se puede 
-consultar en el archivo `lda_new_dataset.ipynb` para ver como se distribuyen
+Por otra parte, también realizamos un *topic modelling* el cual se puede 
+consultar en el archivo `lda_new_dataset.ipynb` para ver cómo se distribuyen
 los chistes en distintos tópicos. Los resultados se pueden ver en la siguiente
 imagen, se observa a simple vista que analizando 8 tópicos con 6 palabras 
 claves en cada uno, no se logra encontrar una relación clara entre los chistes
-de cada tópico, solo en algunos como el tipo 8 donde habla de hijo, hija, mamá, 
-papa, y el topico 7 pero en menor medida.
+de cada tópico, solo en algunos como el tópico 8 donde habla de hijo, hija, mamá, 
+papá, y el tópico 7 pero en menor medida.
 
 <figure>
     <img src='./pictures/nube_palabras.png' alt="Descripción de la imagen">
@@ -164,6 +165,11 @@ humorísticos en español. Para ello, entrenamos el modelo con una base de datos
 de chistes del tipo pregunta y respuesta. Sin embargo, los resultados obtenidos
 no fueron los esperados, ya que el modelo no fue capaz de generar chistes
 graciosos de manera consistente y en muchos casos producía texto ofensivo.
+
+Tal como lo nombran en [este paper](https://arxiv.org/abs/2403.00794), a pesar 
+de los recientes avances en el procesamiento del lenguaje natural, los autores 
+demuestran que los LLMs actuales muestran una capacidad impresionante para 
+hacer que los chistes no sean divertidos.
 
 Esto nos lleva a concluir que GPT-2 no está preparado para entender un concepto
 tan abstracto o subjetivo como lo es el humor. Por lo que se necesitaría un
