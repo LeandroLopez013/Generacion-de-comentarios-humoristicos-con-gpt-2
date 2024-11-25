@@ -7,7 +7,7 @@ Autores: [Kevin Mansilla](https://github.com/kevmansilla),
 En este proyecto exploraremos las capacidades de GPT-2 para generar comentarios 
 humorísticos en español. Para ello utilizaremos la técnica de *fine-tuning*, que 
 consiste en entrenar el modelo con un dataset específico para que pueda generar 
-texto con un estilo particular. 
+texto con un estilo particular, esto se lo conoce como domain adaptation.
 
 Los resultados obtenidos durante el entrenamiento no fueron los esperados, 
 por lo que concluimos que GPT-2 no está preparado para entender un concepto tan 
@@ -104,15 +104,16 @@ tokenizamos los textos y los convertimos en tensores para poder alimentar al mod
 
 Para entrenar de manera más eficiente usamos lo que se conoce como 
 **batch gradiend decent**. Donde la idea es tomar los textos de a bloques 
-de un valor má  ximo para calcular el gradiente. Esta técnica ofrece un balance
-entre el cálculo exacto de gradientes (descenso de gradiente en 
-batch completo) y la eficiencia de procesamiento (descenso de 
-gradiente estocástico).
+de un valor máximo para calcular el gradiente. Esta técnica ofrece un balance
+entre el cálculo exacto de gradientes.
 
-Nosotros usamos un tamaño de *batch* de 8, es decir, que tomamos 8 chistes a la
-vez para calcular el gradiente y actualizar los pesos del modelo. Esto nos 
-pareció adecuado, ya que no contamos con una gran cantidad de datos y 
-queríamos utilizar los recursos computacionales de manera eficiente.
+Al momento de elegir un *batch* se debe tener en cuenta que existe un trade-off
+entre la precisión y la eficiencia computacional. Es decir, que si seleccionamos 
+un tamaño muy chico el cálculo del gradiente será menos preciso pero más rápido,
+y si seleccionamos un tamaño muy grande el cálculo será más preciso pero más
+lento. Entonces, dada la cantidad de datos y recursos que teníamos, decidimos 
+seleccionar un tamaño de *batch* de 8, es decir, que tomamos 8 chistes a la
+vez para calcular el gradiente y actualizar los pesos del modelo. 
 
 Los parámetros utilizados para el entrenamiento fueron los siguientes:
 ``` overwrite_output_dir=True,
@@ -221,9 +222,9 @@ de mucha utilidad, ya que gran cantidad de l contenido estaban incluidas en una
 categoría denominada 'otros' que no aportaba mucha información.
 
 Por esta razón, complementamos el análisis con distintas técnicas no supervisadas 
-de *topic modelling* como lo es *clustering* y LDA (esto se puede consultar en 
-el archivo `lda.ipynb`). Luego de analizar los 
-resultados, decidimos quedarnos con el LDA, ya que en los resultados obtenidos por 
+de *topic modelling* como lo es *clustering* con PCA y LDA (esto se puede 
+consultar en el archivo `lda.ipynb`). Luego de analizar los resultados, 
+decidimos quedarnos con el LDA, ya que en los resultados obtenidos por 
 *clustering* las palabras de cada grupo no tenían mucha relación entre sí; en 
 cambio, en LDA si se podría ver un hilo conductor. 
 
@@ -253,9 +254,10 @@ n-gramas y, el segundo, emplear una base de datos más grande, que debido a la
 limitada disponibilidad de los datos en español, optamos por probar con una en 
 inglés.
 
-En la primera opción, decidimos usar 2-gramas para aprovechar ventajas como la 
-reducción de ambigüedad, la limitación del contexto, la mejora de fluidez y la 
-captura de dependencias locales. Si bien esta técnica mejoró la coherencia del 
+En la primera opción, decidimos usar 2-gramas porque los chistes de caracterizan 
+por tener una estructura simple y utilizan frases o juegos de palabras comunes,
+por lo que pensamos que esta técnica podría ayudar a capturar patrones locales
+y mejorar la coherencia del texto. Si bien esta técnica mejoró la coherencia del 
 texto, los resultados no fueron satisfactorios en términos de la longitud de 
 los chistes generados, tampoco se logró mejorar el desempeño humorístico. 
 A continuación un ejemplo:
