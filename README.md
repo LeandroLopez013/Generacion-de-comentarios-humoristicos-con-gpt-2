@@ -26,7 +26,9 @@ que es un modelo de generación de lenguaje entrenado desde cero con 11,5GB de
 textos en español, de los cuales 3.5GB corresponden a artículos de Wikipedia y 
 8GB a libros de narrativa, cuentos, poesías, ensayos y divulgación. Los datos 
 usan tokenizador Byte Pair Encoding (BPE), los parámetros utilizados son los 
-mismos que los de la versión mediana del modelo OpenAI GPT-2 original.
+mismos que los de la versión mediana del modelo OpenAI GPT-2 original. Escogimos
+este modelo debido a que es uno de los más utilizados en la comunidad, 
+presenta una curva de aprendizaje más amigable en relación a otros LLMs.
 
 En la siguiente imagen se presenta la arquitectura del modelo, que consiste en 
 cargar la base de datos de *hugginface*, luego el modelo base que describimos 
@@ -140,11 +142,12 @@ de la UNC, con la computadora [Jupyter](https://wiki.ccad.unc.edu.ar/infra/compu
 
 ## Evaluación
 
-El principal problema que presenta este trabajo es la evalución del modelo, 
-debido a que el humor es un tema muy subjetivo por lo que una métrica de las 
-tradicionales no es muy informativas. Es por ello que se decidió implementar 
-un bot de telegram que permita a los usuarios evaluar las respuestas generadas
-por el modelo.
+El principal problema que presenta este trabajo es la evalución del modelo, en 
+un principio nosotros planeabamos realiazar una evaluación anecdótica muy simple, 
+ya que el humor es un tema muy subjetivo y las métricas tradicionales no 
+son muy informativas. Pero luego de recibir el feedback de nuestros compeñeros 
+decidimos implementar un bot de telegram que permita a los usuarios evaluar las respuestas generadas por el modelo y de esta forma obtener una métrica un 
+poco mas robusta.
 
 El bot, utilizando el modelo entrenado, responderá con el texto generado y 
 luego los usuarios podrán calificar con like y dislike si el chiste les gustó 
@@ -185,8 +188,8 @@ creemos que una diversidad de chistes mas grande podria ayudar al modelo a
 entender mejor el humor.
 
 También se podría probar con otros modelos de lenguaje mucho más modernos 
-como lo son los llama en cualquiera de sus variantes, probar otras 
-tectinas de regularización.
+como lo son los llama en cualquiera de sus variantes (como lo sugierieron 
+nuestros compañeros), probar otras técninas de regularización.
 
 A su vez, seria de gran utilidad poder entrenar el modelo con los mismos 
 resultados que obtuvimos de este trabajo, es decir, usar las respuestas 
