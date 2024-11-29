@@ -19,6 +19,7 @@ entrenamiento. Posteriormente, se analizarán los resultados obtenidos,
 se presentarán conclusiones específicas y se plantearán posibles líneas de 
 trabajo futuro. Finalmente, se incluirá un anexo que describe las 
 dificultades enfrentadas durante el desarrollo del proyecto.
+
 ## Modelo
 
 El modelo utilizado es [GPT2-medium](https://huggingface.co/DeepESP/gpt2-spanish-medium) 
@@ -65,7 +66,8 @@ correcta ([1](https://huggingface.co/datasets/ysharma/short_jokes),
 
 Al combinar estos *datasets* obtuvimos de unos 700 chistes, lo que nos pareció 
 poco, por lo que decidimos hacer un *web scraping* de algunas páginas aleatorias, 
-con lo que logramos un total de 1.732 chistes. 
+con lo que logramos un total de 1.732 chistes (para consultar como fue construida 
+la base de datos ver el archivo `data_set.ipynb`).
 
 A su vez, a cada elemento de la [base de datos](https://huggingface.co/datasets/kevmansilla/jokes_spanish_tm) 
 decidimos agregarles unos *tags* que ayuden al modelo a entender la estructura 
@@ -158,10 +160,40 @@ o no. Como por ejemplo en la siguiente imagen:
     <img src='./pictures/bot.png' alt="Descripción de la imagen">
 </figure>
 
-Esto nos fue de gran utilidad para poder evaluar el modelo. Por lo que podemos 
-decir que el bot fue capaz de responder un 88.14% de las preguntas que se 
-le realizaron y de estas el 25.0% fue calificado como gracioso.
+(Para ver cómo fue implementado el bot ver el directorio `\bot`)
 
+Esto nos fue de gran utilidad para poder evaluar el modelo, de un total de 
+59 preguntas que se le realizaron al bot, este fue capaz de responder un 88.14% 
+y de estas el 25.0% fue calificado como gracioso.
+
+Con el fin de realizar una evaluación más anecdotica, mostraremos algunos de los 
+chistes generados por el modelo, para ver si realmente son graciosos o no. En 
+el siguiente ejemplo se puede observar que el chistes generado no presenta 
+mucho sentido y no es gracioso
+
+```
+Cómo mueren las estrellas?
+Que se apaguen las luces.
+```
+
+En cambio, en el siguiente ejemplo se puede observar que el chiste generado
+llega a ser gracioso por lo absurdo del contenido.
+```
+Cuál es colmo de un dementor?
+Que no se le puede dar una patada en el culo.
+```
+
+Por último, vemos que en los proximos ejemplos el modelo no logra generar un
+chiste gracioso además que carecen de sentido.
+```
+Cual es el colmo de un músico?
+Que le den a uno un golpe en la cabeza.
+```
+
+```
+Cuál es el colmo de luchador?
+Que se le escape una sonrisa.
+```
 ## Conclusiones
 
 En este trabajo exploramos las capacidades de GPT-2 para generar comentarios
@@ -184,27 +216,23 @@ de entrenamiento que mejoren el desempeño.
 ## Trabajo futuro
 
 Como trabajo futuro si tuvieramos los fondos necesario y un equipo de personas 
-disponibles a tiempo completo se podría amplear la base de datos, ya que
-creemos que una diversidad de chistes mas grande podria ayudar al modelo a
-entender mejor el humor.
-
-También se podría probar con otros modelos de lenguaje mucho más modernos 
+disponibles a tiempo completo se podrían realizar las siguientes tareas:
+- Extender la base de datos para que contengan una mayor cantidad de chistes,
+del mismo formato con el que se esta trabajando.
+- Extender la base de datos y el modelo con chistes de otros formatos, para que el modelo pueda aprender de distintas estructuras de chistes.
+- También se podría probar con otros modelos de lenguaje mucho más modernos 
 como lo son los llama en cualquiera de sus variantes (como lo sugierieron 
-nuestros compañeros), probar otras técninas de regularización.
-
-A su vez, seria de gran utilidad poder entrenar el modelo con los mismos 
+nuestros compañeros), ya sea cuantizandolos o con prompt.
+- Probar otras técninas de regularización.
+- Usar feekback de los usuarios para mejorar el modelo, ya sea con los mismos 
 resultados que obtuvimos de este trabajo, es decir, usar las respuestas 
-de los usuarios para mejorarlo. E implementar la posibilidad de que en caso 
-que al usuario no le guste la respuesta pueda darle una sugerencia al modelo
-para que aprenda de sus errores.
-
-Para mejorar la evaluación se podría implementar un sistema de votación con 
+de los usuarios para mejorarlo (Reinforcement learning from human feedback)
+- Implementar la posibilidad de que en caso que al usuario no le guste la 
+respuesta pueda darle una sugerencia al modelo para que aprenda de sus errores.
+- Para mejorar la evaluación se podría implementar un sistema de votación con 
 tres personas que califiquen cada respuesta, de esta manera se podría tener
 una métrica más objetiva. Ya que es un sistema imparcial y no depende de los 
 sesgos de una sola persona.
-
-Y por último, extenderlo para que se adapte a cualquier tipo de chiste, no solo
-a los del tipo pregunta y respuesta.
 
 ## Anexo: Complicaciones encontradas durante el desarrollo del proyecto
 
